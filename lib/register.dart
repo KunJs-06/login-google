@@ -46,7 +46,6 @@ class _RegisterState extends State<Register> {
     return null;
   }
 
-
   void _createAccountWithEmailAndPassword(BuildContext context) {
     if (formKey.currentState!.validate()) {
       BlocProvider.of<AuthenticationBloc>(context).add(
@@ -64,7 +63,6 @@ class _RegisterState extends State<Register> {
       GoogleSignInRequested(),
     );
   }
-
 
   @override
   void dispose() {
@@ -107,7 +105,6 @@ class _RegisterState extends State<Register> {
                         child: Card(
                           child: Container(
                             padding: const EdgeInsets.all(18.0),
-
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -154,7 +151,7 @@ class _RegisterState extends State<Register> {
                                           validator: (value) {
                                             return value != null &&
                                                 !EmailValidator.validate(value)
-                                                ? 'Enter a valid email'
+                                                ? 'กรุณากรอก email'
                                                 : null;
                                           },
                                         ),
@@ -169,11 +166,7 @@ class _RegisterState extends State<Register> {
                                           ),
                                           autovalidateMode:
                                           AutovalidateMode.onUserInteraction,
-                                          validator: (value) {
-                                            return value != null && value.length < 6
-                                                ? "Enter min. 6 characters"
-                                                : null;
-                                          },
+                                          validator: _passwordValidator,
                                         ),
                                         const SizedBox(
                                           height: 12,

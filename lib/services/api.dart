@@ -36,6 +36,7 @@ Future<DefaultReturnWithData<Class>> defaultApiGetNoLoadList<Class>(String url, 
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
+
     responseData = DefaultReturnWithData<Class>.fromJson(json.decode(response.body), jsonConvert);
   } catch (e) {
     print("e ${e}");
@@ -50,6 +51,60 @@ Future<DefaultReturnWithData<Class>> defaultApiGetNoLoadList<Class>(String url, 
   throw responseData;
 }
 
+// class spritesData<Class> {
+//   final Class? sprites;
+//   final String name;
+//   spritesData({
+//     required this.name,
+//     this.sprites
+//   });
+//
+//   factory spritesData.fromJson(
+//       Map<String, dynamic> json, Function(dynamic) callback) {
+//     Class? temp;
+//     String? error;
+//     try {
+//       temp = callback(json['sprites']);
+//     } catch (e) {
+//       temp = null;
+//       error = errorInternetConnection;
+//     }
+//     return spritesData(
+//         name: json['name'],
+//         sprites: temp
+//     );
+//   }
+// }
+//
+// Future<spritesData<Class>> defaultApiGetNoLoad<Class>(Map<String, String> data, String url, Function(dynamic) jsonConvert, Future<bool> Function(spritesData<Class>) onSuccess) async {
+//   http.Response response;
+//   spritesData<Class> responseData;
+//   try {
+//     response = await http.get(
+//       Uri.parse(url),
+//       headers: <String, String>{
+//         'Content-Type': 'application/json; charset=UTF-8',
+//       },
+//     );
+//     print('Uri.parse(url): ${Uri.parse(url)}');
+//     responseData = spritesData<Class>.fromJson(json.decode(response.body), jsonConvert);
+//   } catch (e) {
+//     print("e ${e}");
+//     throw errorInternetConnection;
+//   }
+//   if (responseData.sprites != null) {
+//     if (await onSuccess(responseData)) {
+//       return responseData;
+//     }
+//     throw errorSomethingWentWrong;
+//   }
+//   throw responseData;
+// }
+
+//------------------------------------------------------------------------------------------------------//
+
+
+
 Future<DefaultReturnWithData<List<PokemonListData>>> getPokemonDataList(int offset, int limit) async {
   return defaultApiGetNoLoadList<List<PokemonListData>>( "api/v2/pokemon?offset=${offset}&limit=${limit}",
         (data) => (data as List).map((i) => PokemonListData.fromJson(i)).toList(),
@@ -63,68 +118,26 @@ Future<DefaultReturnWithData<List<PokemonListData>>> getPokemonDataList(int offs
 }
 
 //------------------------------------------------------------------------------------------------------//
-class spritesData<Class> {
-  final Class? sprites;
 
-  spritesData({this.sprites});
-
-  factory spritesData.fromJson(
-      Map<String, dynamic> json, Function(dynamic) callback) {
-    Class? temp;
-    String? error;
-    try {
-      temp = callback(json['sprites']);
-    } catch (e) {
-      temp = null;
-      error = errorInternetConnection;
-    }
-    return spritesData(sprites: temp);
-  }
-}
-
-Future<spritesData<Class>> defaultApiGetNoLoad<Class>(Map<String, String> data, String url, Function(dynamic) jsonConvert, Future<bool> Function(spritesData<Class>) onSuccess) async {
-  http.Response response;
-  spritesData<Class> responseData;
+Future<DataPokemon> getPokemonImage(urlImage) async {
   try {
-    response = await http.get(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+    final response = await http.get(
+      Uri.parse(urlImage),
+      headers: {
+        "Content-Type": "application/json",
       },
     );
-    responseData = spritesData<Class>.fromJson(json.decode(response.body), jsonConvert);
-  } catch (e) {
-    print("e ${e}");
-    throw errorInternetConnection;
-  }
-  if (responseData.sprites != null) {
-    if (await onSuccess(responseData)) {
-      return responseData;
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      print('urlImage${data}');
+
+      return DataPokemon.fromJson(data);
+
+    } else {
+      throw Exception("Failed to load Pokémon detail. Error: ${response.statusCode}");
     }
-    throw errorSomethingWentWrong;
-  }
-  throw responseData;
-}
-
-class ImageData1 {
-  final String image;
-
-  ImageData1({
-    required this.image,
-  });
-
-  factory ImageData1.fromJson(Map<String, dynamic> json) {
-    return ImageData1(
-      image: '${json['front_default']}',
-    );
+  } catch (error) {
+    throw Exception("Error fetching Pokémon detail: $error");
   }
 }
 
-Future<spritesData<ImageData1>> getPokemonImage(urlImage) async {
-  return defaultApiGetNoLoad<ImageData1>({}, urlImage, (data) => ImageData1.fromJson(data), (returnData) async {
-    if (returnData.sprites == null) {
-      return false;
-    }
-    return true;
-  });
-}
