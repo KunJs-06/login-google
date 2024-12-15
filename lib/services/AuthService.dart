@@ -54,6 +54,7 @@ class AuthService{
       final UserCredential userCredential = await auth.signInWithCredential(credential);
       return userCredential.user;
     } catch (e) {
+      print('logon google error :${e}');
       throw Exception(e.toString());
     }
   }

@@ -2,7 +2,6 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:login_google/HomePage.dart';
 import 'package:login_google/LoginPage.dart';
 import 'package:login_google/bloc/Authentication/authentication_bloc.dart';
@@ -133,8 +132,7 @@ class _RegisterState extends State<Register> {
                                             hintText: "Name",
                                             border: OutlineInputBorder(),
                                           ),
-                                          autovalidateMode:
-                                          AutovalidateMode.onUserInteraction,
+                                          autovalidateMode: AutovalidateMode.onUserInteraction,
                                           validator: _nameValidator,
                                         ),
                                         const SizedBox(

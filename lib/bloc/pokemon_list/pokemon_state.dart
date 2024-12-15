@@ -2,7 +2,6 @@ part of 'pokemon_bloc.dart';
 
 abstract class PokemonState extends Equatable {
   const PokemonState();
-
   @override
   List<Object?> get props => [];
 }
@@ -20,11 +19,24 @@ class PokemonLoading extends PokemonState {
 
 class PokemonLoaded extends PokemonState {
   final List<PokemonListData> pokemons;
+  final List<PokemonListData> listGroupPokemon;
+  final List<int> counts;
 
-  PokemonLoaded({required this.pokemons});
+  PokemonLoaded({
+    required this.pokemons,
+    required this.listGroupPokemon,
+    required this.counts,
+  });
+  PokemonLoaded copyWith({List<PokemonListData>? pokemons, List<int>? counts,List<PokemonListData>? listGroupPokemon}) {
+    return PokemonLoaded(
+      pokemons: pokemons ?? this.pokemons,
+      listGroupPokemon: listGroupPokemon ?? this.listGroupPokemon,
+      counts: counts ?? this.counts,
+    );
+  }
 
   @override
-  List<Object?> get props => [pokemons];
+  List<Object?> get props => [pokemons,counts,listGroupPokemon];
 }
 
 class PokemonError extends PokemonState {
@@ -35,3 +47,5 @@ class PokemonError extends PokemonState {
   @override
   List<Object?> get props => [message];
 }
+
+

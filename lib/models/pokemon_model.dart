@@ -4,7 +4,8 @@ class PokemonListData {
 
   PokemonListData({
     required this.name,
-    required this.url});
+    required this.url
+  });
 
   factory PokemonListData.fromJson(Map<String, dynamic> json) {
     return PokemonListData(
@@ -17,25 +18,43 @@ class PokemonListData {
 /*------------------------------------------------------------------*/
 class DataPokemon{
   final String id;
-  final ImageDataPokemon? data_image;
+  final String name;
+  final String weight;
+  final String height;
+  final ImageDataPokemon? sprites;
+  final List<ListTypesDataPokemon> types;
 
   DataPokemon({
     required this.id,
-    required this.data_image,
+    required this.name,
+    required this.weight,
+    required this.height,
+    required this.sprites,
+    required this.types,
   });
 
   factory DataPokemon.fromJson(Map<String, dynamic> json) {
-    ImageDataPokemon? data_image;
+    ImageDataPokemon? sprites;
+    List<ListTypesDataPokemon>? types = [];
 
     try {
-      data_image = ImageDataPokemon.fromJson(json['sprites']);
+      sprites = ImageDataPokemon.fromJson(json['sprites']);
     } catch (e) {
-      data_image = null;
+      sprites = null;
+    }
+    try {
+      types = (json['types'] as List).map((i) => ListTypesDataPokemon.fromJson(i)).toList();
+    } catch (e) {
+      types = [];
     }
 
     return DataPokemon(
       id: '${json['id']}',
-      data_image: data_image,
+      name: '${json['name']}',
+      weight: '${json['weight']}',
+      height: '${json['height']}',
+      sprites: sprites,
+      types: types,
     );
   }
 
@@ -51,6 +70,47 @@ class ImageDataPokemon {
   factory ImageDataPokemon.fromJson(Map<String, dynamic> json) {
     return ImageDataPokemon(
       image: '${json['front_default']}',
+    );
+  }
+}
+
+class ListTypesDataPokemon {
+  final String slot;
+  final TypesDataPokemon type;
+
+  ListTypesDataPokemon({
+    required this.slot,
+    required this.type,
+  });
+
+  factory ListTypesDataPokemon.fromJson(Map<String, dynamic> json) {
+    TypesDataPokemon? type;
+
+    try {
+      type = TypesDataPokemon.fromJson(json['type']);
+    } catch (e) {
+      type = null;
+    }
+    return ListTypesDataPokemon(
+      slot: '${json['slot']}',
+      type: type!,
+    );
+  }
+}
+
+class TypesDataPokemon {
+  final String name;
+  final String url;
+
+  TypesDataPokemon({
+    required this.name,
+    required this.url,
+  });
+
+  factory TypesDataPokemon.fromJson(Map<String, dynamic> json) {
+    return TypesDataPokemon(
+      name: '${json['name']}',
+      url: '${json['url']}',
     );
   }
 }
