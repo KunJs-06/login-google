@@ -3,22 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:login_google/HomePage.dart';
 import 'package:login_google/LoginPage.dart';
+import 'package:login_google/NotificationScreen.dart';
 import 'package:login_google/bloc/Authentication/authentication_bloc.dart';
 import 'package:login_google/bloc/pokemon_list/pokemon_bloc.dart';
 import 'package:login_google/services/AuthService.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // ฟังก์ชันนี้เรียกใช้เมื่อมีการแจ้งเตือนใน background
+  print('Handling a background message: ${message.messageId}');
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +59,9 @@ class MyApp extends StatelessWidget {
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return const HomePage();
+                  return LoginPage();
                 }
-                return const LoginPage();
+                return LoginPage();
               }),
         ),
       ),

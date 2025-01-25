@@ -18,6 +18,8 @@ class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
   int offset = 0;
   final int limit = 10;
+  bool isLoadingMore = false;
+
 
   @override
   void initState() {
@@ -27,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _loadPokemonData() {
+    isLoadingMore = true;
     _pokemonBloc.add(FetchPokemonEvent(offset: offset, limit: limit));
   }
 
@@ -36,6 +39,7 @@ class _HomePageState extends State<HomePage> {
       if (isBottom) {
         offset += limit;
         _loadPokemonData();
+        isLoadingMore = false;
       }
     }
   }
@@ -83,7 +87,6 @@ class _HomePageState extends State<HomePage> {
                   if (index < state.pokemons.length) {
                     final pokemon = state.pokemons[index];
                     final counts = state.counts[index];
-                    print('countscounts:${counts}');
                     return FutureBuilder(
                       future: getPokemonImage(pokemon.url),
                       builder: (context, snapshot) {
@@ -96,73 +99,87 @@ class _HomePageState extends State<HomePage> {
                             surfaceTintColor: Colors.red,
                             shadowColor:Colors.red,
                             elevation: 2,
-                            child: Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => PokemonDetail(pokemon: id!)));
-                                  },
-                                  child: Container(
-                                    child:
-                                    Column(
-                                      children: [
-                                        Image.network('${imageUrl?.image}'),
-                                        Text(pokemon.name),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: GestureDetector(
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => PokemonDetail(pokemon: id!)));
+                              },
+                              child: Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        final totalCount = state.counts.reduce((a, b) => a + b);
-                                        if (totalCount < 6) {
-                                          _pokemonBloc.add(IncreaseCountEvent(index));
-                                        } else {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(content: Text('ครบ 6 ตัว')),
-                                          );
-                                        }
-                                      },
-                                      child: Center(child: Icon(Icons.add, color: Colors.white)),
-                                      style: ElevatedButton.styleFrom(
-                                        shape: CircleBorder(),
-                                        padding: EdgeInsets.zero,
-                                        backgroundColor: Colors.green,
-                                        foregroundColor: Colors.cyan,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                          height: 30,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(5),
-                                              color: Colors.white
-                                          ),
-                                          child: Text('${counts}')),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        _pokemonBloc.add(DecreaseCountEvent(index));
-                                      },
-                                      child: Center(child: Icon(Icons.remove, color: Colors.white)),
-                                      style: ElevatedButton.styleFrom(
-                                        shape: CircleBorder(),
-                                        padding: EdgeInsets.zero,
-                                        backgroundColor: Colors.green,
-                                        foregroundColor: Colors.cyan,
-                                      ),
-                                    ),
+                                    Image.network('${imageUrl?.image}'),
+                                    Text(pokemon.name),
                                   ],
                                 ),
-                              ],
+                              ),
                             ),
+                            // Column(
+                            //   children: [
+                            //     GestureDetector(
+                            //       onTap: (){
+                            //         Navigator.push(context, MaterialPageRoute(builder: (context) => PokemonDetail(pokemon: id!)));
+                            //       },
+                            //       child: Container(
+                            //         child:
+                            //         Column(
+                            //           children: [
+                            //             Image.network('${imageUrl?.image}'),
+                            //             Text(pokemon.name),
+                            //           ],
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     // Row(
+                            //     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //     //   children: [
+                            //     //     ElevatedButton(
+                            //     //       onPressed: () {
+                            //     //         final totalCount = state.counts.reduce((a, b) => a + b);
+                            //     //         if (totalCount < 6) {
+                            //     //           _pokemonBloc.add(IncreaseCountEvent(index));
+                            //     //         } else {
+                            //     //           ScaffoldMessenger.of(context).showSnackBar(
+                            //     //             SnackBar(content: Text('ครบ 6 ตัว')),
+                            //     //           );
+                            //     //         }
+                            //     //       },
+                            //     //       child: Center(child: Icon(Icons.add, color: Colors.white)),
+                            //     //       style: ElevatedButton.styleFrom(
+                            //     //         shape: CircleBorder(),
+                            //     //         padding: EdgeInsets.zero,
+                            //     //         backgroundColor: Colors.green,
+                            //     //         foregroundColor: Colors.cyan,
+                            //     //       ),
+                            //     //     ),
+                            //     //     Expanded(
+                            //     //       child: Container(
+                            //     //           height: 30,
+                            //     //           alignment: Alignment.center,
+                            //     //           decoration: BoxDecoration(
+                            //     //               borderRadius: BorderRadius.circular(5),
+                            //     //               color: Colors.white
+                            //     //           ),
+                            //     //           child: Text('${counts}')),
+                            //     //     ),
+                            //     //     ElevatedButton(
+                            //     //       onPressed: () {
+                            //     //         _pokemonBloc.add(DecreaseCountEvent(index));
+                            //     //       },
+                            //     //       child: Center(child: Icon(Icons.remove, color: Colors.white)),
+                            //     //       style: ElevatedButton.styleFrom(
+                            //     //         shape: CircleBorder(),
+                            //     //         padding: EdgeInsets.zero,
+                            //     //         backgroundColor: Colors.green,
+                            //     //         foregroundColor: Colors.cyan,
+                            //     //       ),
+                            //     //     ),
+                            //     //   ],
+                            //     // ),
+                            //   ],
+                            // ),
                           );
                         } else {
-                          return Center(child: Text('No Image'));
+                          return  Center(child: Image.asset('assets/pokemon-icon.png',width: 50,),);
                         }
                       },
                     );
@@ -174,7 +191,7 @@ class _HomePageState extends State<HomePage> {
             return Center(child: Text('Error: ${state.message}'));
           }
           else {
-            return Center(child: Text(''));
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),
